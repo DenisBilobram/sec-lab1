@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <Match>
+    <Class name="~sec\.lab1\.app\.model\..*"/>
+    <Bug code="EI,EI2"/>
+  </Match>
+
+  <Match>
+    <Class name="sec.lab1.app.service.JwtService"/>
+    <Bug code="CT"/>
+  </Match>
+</FindBugsFilter>

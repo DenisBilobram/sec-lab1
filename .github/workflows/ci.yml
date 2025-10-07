@@ -22,8 +22,8 @@ jobs:
           java-version: '21'
           cache: 'gradle'
 
-      - name: Build & Test
-        run: ./gradlew clean build test --no-daemon
+      - name: Build & Test (H2 profile)
+        run: SPRING_PROFILES_ACTIVE=test ./gradlew clean build test --no-daemon
 
       - name: SpotBugs (SAST)
         run: ./gradlew spotbugsAll --no-daemon

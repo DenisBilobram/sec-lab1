@@ -46,10 +46,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testRuntimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+
+	systemProperty "spring.profiles.active", System.getProperty("spring.profiles.active", "test")
 }
 
 
@@ -58,6 +61,7 @@ spotbugs {
     ignoreFailures = false
     effort = 'max'
     reportLevel = 'low'
+	excludeFilter = file('config/spotbugs-exclude.xml')
 }
 
 tasks.register('spotbugsAll') {
