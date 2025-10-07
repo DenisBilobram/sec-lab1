@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-test-scan:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Build & Test
+        run: ./gradlew clean build test --no-daemon
+
+      - name: SpotBugs (SAST)
+        run: ./gradlew spotbugsAll --no-daemon
+
+      - name: Dependency-Check (SCA)
+        run: ./gradlew dependencyCheckAnalyze --no-daemon
+
+      - name: Upload SpotBugs reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: spotbugs-reports
+          path: |
+            **/build/reports/spotbugs/*.html
+            **/build/reports/spotbugs/*.xml
+          if-no-files-found: warn
+
+      - name: Upload Dependency-Check report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: |
+            **/build/reports/dependency-check-report.html
+            **/build/reports/dependency-check-report.xml
+          if-no-files-found: warn
