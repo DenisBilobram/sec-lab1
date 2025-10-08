@@ -30,23 +30,15 @@ jobs:
 
       - name: Generate SBOM (CycloneDX)
         run: ./gradlew cyclonedxBom --no-daemon
-        
-      - name: Setup Trivy
-        uses: aquasecurity/setup-trivy@v0.2.0
-        with:
-          version: v0.65.0
 
-      - name: Trivy SBOM scan
+      - name: Trivy SBOM scan (fail on HIGH/CRITICAL)
         uses: aquasecurity/trivy-action@0.24.0
         with:
           scan-type: sbom
+          input: build/reports/cyclonedx-bom.json
           format: sarif
           output: trivy.sarif
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: 1
           timeout: 10m
-          hide-progress: true
-          args: build/reports/cyclonedx-bom.json
-        env:
-          TRIVY_LOG_LEVEL: ERROR
