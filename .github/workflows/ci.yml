@@ -28,23 +28,17 @@ jobs:
       - name: SpotBugs (SAST)
         run: ./gradlew spotbugsAll --no-daemon
 
-      - name: Dependency-Check (SCA)
-        run: ./gradlew dependencyCheckAnalyze --no-daemon
+      - name: Generate SBOM (CycloneDX)
+        run: ./gradlew cyclonedxBom --no-daemon
 
-      - name: Upload SpotBugs reports
-        uses: actions/upload-artifact@v4
+      - name: Trivy SBOM scan (fail on HIGH/CRITICAL)
+        uses: aquasecurity/trivy-action@0.24.0
         with:
-          name: spotbugs-reports
-          path: |
-            **/build/reports/spotbugs/*.html
-            **/build/reports/spotbugs/*.xml
-          if-no-files-found: warn
-
-      - name: Upload Dependency-Check report
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependency-check-report
-          path: |
-            **/build/reports/dependency-check-report.html
-            **/build/reports/dependency-check-report.xml
-          if-no-files-found: warn
+          scan-type: 'sbom'
+          sbom: 'build/reports/cyclonedx-bom.json'
+          format: 'sarif'
+          output: 'trivy.sarif'
+          severity: 'HIGH,CRITICAL'
+          ignore-unfixed: true
+          exit-code: '1'
+          timeout: '10m'

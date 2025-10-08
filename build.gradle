@@ -4,7 +4,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 
 	id 'com.github.spotbugs' version '6.0.20'
-	id 'org.owasp.dependencycheck' version '12.0.0'
+	id 'org.cyclonedx.bom' version '1.10.0'
 }
 
 group = 'sec.lab1'
@@ -68,11 +68,11 @@ tasks.register('spotbugsAll') {
     dependsOn 'spotbugsMain', 'spotbugsTest'
 }
 
-dependencyCheck {
-    failOnError = false
-    failBuildOnCVSS = 7.0
-    analyzers {
-        assemblyEnabled = false
-        nodeAuditEnabled = false
-    }
+cyclonedxBom {
+    includeConfigs = ["runtimeClasspath", "compileClasspath"]
+    projectType = "application"
+    schemaVersion = "1.5"
+    destination = file("$buildDir/reports")
+    outputName = "cyclonedx-bom"
+    outputFormat = "json"
 }
