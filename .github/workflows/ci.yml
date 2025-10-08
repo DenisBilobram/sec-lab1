@@ -40,7 +40,6 @@ jobs:
         uses: aquasecurity/trivy-action@0.24.0
         with:
           scan-type: sbom
-          input: build/reports/cyclonedx-bom.json
           format: sarif
           output: trivy.sarif
           severity: HIGH,CRITICAL
@@ -48,6 +47,6 @@ jobs:
           exit-code: 1
           timeout: 10m
           hide-progress: true
-          args: --quiet
+          args: build/reports/cyclonedx-bom.json
         env:
           TRIVY_LOG_LEVEL: ERROR
